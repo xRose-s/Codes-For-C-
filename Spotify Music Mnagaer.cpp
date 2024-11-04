@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <limits> // For numeric limits
 
 using namespace std;
 
@@ -83,6 +84,7 @@ public:
         songQueue.push_back(first);
 
         cout << "Playlist shuffled." << endl;
+        displayQueue(); // Display updated queue after shuffle
     }
 
     void displayPlaylist() {
@@ -96,6 +98,10 @@ public:
             }
             temp = temp->next;
         }
+        displayQueue(); // Display queue with the playlist
+    }
+
+    void displayQueue() {
         cout << "Current queue: ";
         for (const auto& song : songQueue) {
             cout << song << " ";
@@ -105,7 +111,7 @@ public:
 
     void showControls() {
         cout << "Controls:\n"
-             << "  Space - Play Current Song\n"
+             << "  F     - Play/Pause Current Song\n"
              << "  s     - Shuffle the playlist\n"
              << "  n     - Next song\n"
              << "  b     - Previous song\n"
@@ -115,11 +121,22 @@ public:
 
 int main() {
     MusicPlayer player;
-
     int numSongs;
-    cout << "Enter the number of songs to add: ";
-    cin >> numSongs;
-    cin.ignore(); // Clear newline character from the buffer
+
+    // Input loop for valid number of songs
+    while (true) {
+        cout << "Enter the number of songs to add: ";
+        cin >> numSongs;
+
+        if (cin.fail() || numSongs <= 0) {
+            cout << "Invalid input. Please enter a positive integer for the number of songs." << endl;
+            cin.clear(); // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear newline character from the buffer
+            break; // Valid input, exit loop
+        }
+    }
 
     for (int i = 1; i <= numSongs; ++i) {
         string songTitle;
@@ -143,7 +160,7 @@ int main() {
         cin >> command;
 
         switch (command) {
-            case ' ':
+            case 'F':
                 player.playCurrentSong();
                 break;
             case 's':
@@ -159,7 +176,7 @@ int main() {
                 cout << "Exiting program." << endl;
                 return 0;
             default:
-                cout << "Invalid command. Please try again." << endl;
+                cout << "Invalid command. Please try again. Type 'F' to play, 's' to shuffle, 'n' for next, 'b' for previous, or 'q' to quit." << endl;
         }
     }
 
