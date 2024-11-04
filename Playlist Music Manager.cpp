@@ -45,6 +45,56 @@ public:
         songQueue.push_back(songTitle); // Add to queue
     }
 
+    void addSongAtPosition(const string& songTitle, int position) {
+        SongNode* newSong = new SongNode(songTitle);
+        if (position == 1) {
+            newSong->next = head;
+            head = newSong;
+            songQueue.insert(songQueue.begin(), songTitle);
+        } else {
+            SongNode* temp = head;
+            for (int i = 1; i < position - 1 && temp != nullptr; ++i) {
+                temp = temp->next;
+            }
+            if (temp == nullptr) {
+                cout << "Invalid position." << endl;
+                delete newSong;
+                return;
+            }
+            newSong->next = temp->next;
+            temp->next = newSong;
+            songQueue.insert(songQueue.begin() + position - 1, songTitle);
+        }
+        cout << "Song added at position " << position << ": " << songTitle << endl;
+    }
+
+    void removeSongAtPosition(int position) {
+        if (head == nullptr) {
+            cout << "Playlist is empty." << endl;
+            return;
+        }
+        if (position == 1) {
+            SongNode* temp = head;
+            head = head->next;
+            delete temp;
+            songQueue.erase(songQueue.begin());
+        } else {
+            SongNode* temp = head;
+            for (int i = 1; i < position - 1 && temp->next != nullptr; ++i) {
+                temp = temp->next;
+            }
+            if (temp->next == nullptr) {
+                cout << "Invalid position." << endl;
+                return;
+            }
+            SongNode* toDelete = temp->next;
+            temp->next = toDelete->next;
+            delete toDelete;
+            songQueue.erase(songQueue.begin() + position - 1);
+        }
+        cout << "Song removed from position " << position << endl;
+    }
+
     void playCurrentSong() {
         if (currentSong != nullptr) {
             cout << "Playing: " << currentSong->title << endl;
@@ -115,6 +165,8 @@ public:
              << "  s     - Shuffle the playlist\n"
              << "  n     - Next song\n"
              << "  b     - Previous song\n"
+             << "  G     - Add a song at a specific position\n"
+             << "  g     - Remove a song from a specific position\n"
              << "  q     - Quit the program\n";
     }
 };
@@ -172,11 +224,29 @@ int main() {
             case 'b':
                 player.playPreviousSong();
                 break;
+            case 'G': {
+                int position;
+                string songTitle;
+                cout << "Enter position to add the song: ";
+                cin >> position;
+                cin.ignore();
+                cout << "Enter song title: ";
+                getline(cin, songTitle);
+                player.addSongAtPosition(songTitle, position);
+                break;
+            }
+            case 'g': {
+                int position;
+                cout << "Enter position to remove the song: ";
+                cin >> position;
+                player.removeSongAtPosition(position);
+                break;
+            }
             case 'q':
                 cout << "Exiting program." << endl;
                 return 0;
             default:
-                cout << "Invalid command. Please try again. Type 'F' to play, 's' to shuffle, 'n' for next, 'b' for previous, or 'q' to quit." << endl;
+                cout << "Invalid command. Please try again." << endl;
         }
     }
 
