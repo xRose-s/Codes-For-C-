@@ -167,7 +167,8 @@ public:
              << "  b     - Previous song\n"
              << "  G     - Add a song at a specific position\n"
              << "  g     - Remove a song from a specific position\n"
-             << "  q     - Quit the program\n";
+             << "  q     - Quit the program\n"
+             << "  W     -Display The Playlist\n";
     }
 };
 
